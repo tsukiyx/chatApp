@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import FriendRequest from "../models/friendRequest.model.js";
 import User from "../models/user.model.js";
 
@@ -6,33 +7,45 @@ export const sendFriendRequest = async (req, res) => {
     const senderId = req.user._id;
     const { id: receiverId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(receiverId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const receiver = await User.findById(receiverId);
-    if (!receiver) return res.status(400).json({ message: "User not found" });
-    const isFriend = receiver.friends.includes(receiverId);
+    if (!receiver) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    if (isFriend)
+    if (senderId.toString() === receiver._id.toString()) {
+      return res.status(400).json({ message: "You can't add yourself" });
+    }
+
+    const isFriend = receiver.friends.includes(senderId.toString());
+    if (isFriend) {
       return res.status(400).json({ message: "You are already friends" });
+    }
 
-    const requestPending = await FriendRequest.findOne({
+    const requestExists = await FriendRequest.findOne({
       receiverId,
       senderId,
-      status: "pending",
+      status: { $in: ["pending"] },
     });
 
-    if (requestPending)
-      return res.status(400).json({ message: "You have a pending request" });
+    if (requestExists) {
+      return res
+        .status(400)
+        .json({ message: "You already have a pending friend request" });
+    }
 
     const newRequest = await FriendRequest.create({
       receiverId,
       senderId,
     });
 
-    await newRequest.save();
-
     return res.status(201).json(newRequest);
   } catch (error) {
-    console.log("Error in sendFriendRequest", error.message);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in sendFriendRequest:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -83,7 +96,7 @@ export const rejectFriendRequest = async (req, res) => {
       return res.status(404).json({ message: "Friend request not found" });
     }
 
-    let requestStatus = request.status;
+    const requestStatus = request.status;
 
     if (requestStatus !== "pending") {
       return res.status(400).json({ message: "It is not a pending request" });
