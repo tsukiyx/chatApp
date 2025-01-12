@@ -32,5 +32,4 @@ io.on("connection", (socket) => {
   });
 });
 
-// Exportar app, io y server
 export { app, io, server };

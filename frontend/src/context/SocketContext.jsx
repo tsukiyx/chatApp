@@ -26,23 +26,21 @@ export const SocketContextProvider = ({ children }) => {
 
       setSocket(socketInstance);
 
-      // Ensure socket is not null before calling .on
       socketInstance.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
 
       return () => {
-        socketInstance.close(); // Asegurarse de cerrar correctamente
+        socketInstance.close();
         setSocket(null);
       };
     } else {
-      // Close socket connection if authUser is null
       if (socket) {
         socket.close();
         setSocket(null);
       }
     }
-  }, [authUser]); // Dependency array added
+  }, [authUser]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>

@@ -10,9 +10,7 @@ const useConversation = create(
         set({ selectedConversation: conversation });
       },
       setMessages: (messages) => set({ messages }),
-      // Añadir método para limpiar mensajes cuando se cambia de conversación
       clearMessages: () => set({ messages: [] }),
-      // Añadir método para añadir un nuevo mensaje
       addMessage: (newMessage) =>
         set((state) => ({
           messages: [...state.messages, newMessage],
@@ -22,7 +20,6 @@ const useConversation = create(
       name: "conversation-storage",
       partialize: (state) => ({
         selectedConversation: state.selectedConversation,
-        // No persistimos los mensajes para evitar inconsistencias
       }),
     },
   ),

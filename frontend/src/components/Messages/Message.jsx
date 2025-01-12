@@ -6,7 +6,6 @@ const Message = ({ message }) => {
   const { authUser } = useAuthContext();
   const { selectedConversation } = useConversation();
 
-  // Validación adicional para evitar errores después del refresh
   if (!authUser || !selectedConversation) {
     return null;
   }

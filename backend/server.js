@@ -6,7 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import userRoutes from "./routes/user.route.js";
 import connectDB from "./db/db.js";
-import { app, server } from "./socket/socket.js"; // Importa app y server desde socket.js
+import { app, server } from "./socket/socket.js";
 
 const __dirname = path.resolve();
 
@@ -28,6 +28,5 @@ app.get("*", (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
   connectDB();
 });
