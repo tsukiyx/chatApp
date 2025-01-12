@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
       profilePic,
     });
 
-    const token = generateToken(newUser._id, res);
+    generateToken(newUser._id, res);
 
     const userInfo = {
       _id: newUser._id,
@@ -84,7 +84,7 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = generateToken(user._id, res);
+    generateToken(user._id, res);
 
     const userInfo = {
       _id: user._id,
@@ -96,7 +96,6 @@ export const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       userInfo,
     });
   } catch (error) {

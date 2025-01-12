@@ -7,6 +7,9 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, minlength: 8 },
     gender: { type: String, required: true, enum: ["male", "female"] },
     profilePic: { type: String, default: "" },
+    friends: [
+      { type: mongoose.Schema.Types.ObjectId, default: [], ref: "User" },
+    ],
   },
   { timestamps: true },
 );
